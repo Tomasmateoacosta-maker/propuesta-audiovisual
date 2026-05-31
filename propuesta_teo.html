@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propuesta de Servicios Audiovisuales — Tomás Mateo Acosta</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #080808;
+    --surface: #101010;
+    --card: #141414;
+    --card2: #1a1a1a;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --white: #F4F2EE;
+    --gray1: #AAAAAA;
+    --gray2: #666666;
+    --gray3: #333333;
+    --serif: 'DM Serif Display', Georgia, serif;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.025;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 28px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    border-bottom: 1px solid var(--border2);
+    padding: 18px 0;
+    position: sticky;
+    top: 0;
+    background: rgba(8,8,8,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 100;
+  }
+  .topbar .wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .topbar-brand {
+    font-family: var(--serif);
+    font-size: 15px;
+    color: var(--white);
+    letter-spacing: 0.01em;
+  }
+  .topbar-meta {
+    font-size: 11px;
+    color: var(--gray2);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 80px 0 64px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gray2);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.1s ease forwards;
+  }
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(42px, 8vw, 64px);
+    font-weight: 400;
+    line-height: 1.05;
+    color: var(--white);
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.2s ease forwards;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--gray1);
+  }
+  .hero-sub {
+    font-size: 14px;
+    color: var(--gray2);
+    margin-top: 20px;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.35s ease forwards;
+  }
+
+  /* ── TOTAL BANNER ── */
+  .total-banner {
+    margin: 48px 0;
+    padding: 36px 40px;
+    background: var(--white);
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.45s ease forwards;
+  }
+  .total-banner-label {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #666;
+    margin-bottom: 6px;
+  }
+  .total-banner-price {
+    font-family: var(--serif);
+    font-size: clamp(32px, 6vw, 48px);
+    color: #080808;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .total-banner-note {
+    font-size: 12px;
+    color: #999;
+    text-align: right;
+  }
+
+  /* ── SECTIONS ── */
+  section {
+    padding: 56px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  section:last-of-type { border-bottom: none; }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gray2);
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── SERVICE CARDS ── */
+  .service-cards { display: flex; flex-direction: column; gap: 12px; }
+
+  .service-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .service-card:hover { border-color: var(--border2); }
+
+  .service-card-head {
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--card2);
+  }
+  .service-card-title {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--white);
+  }
+  .service-card-price {
+    font-family: var(--serif);
+    font-size: 17px;
+    color: var(--gray1);
+    letter-spacing: -0.01em;
+  }
+  .service-card-body { padding: 18px 22px; }
+
+  .service-items { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+  .service-items li {
+    font-size: 13px;
+    color: var(--gray1);
+    padding-left: 16px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .service-items li::before {
+    content: '–';
+    position: absolute;
+    left: 0;
+    color: var(--gray3);
+  }
+
+  /* ── TOTAL ROW ── */
+  .total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0 0;
+    margin-top: 4px;
+    border-top: 1px solid var(--border2);
+  }
+  .total-row-label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gray2);
+  }
+  .total-row-price {
+    font-family: var(--serif);
+    font-size: 22px;
+    color: var(--white);
+    letter-spacing: -0.02em;
+  }
+
+  /* ── INFO BLOCKS ── */
+  .info-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 22px 24px;
+    margin-bottom: 12px;
+  }
+  .info-block p {
+    font-size: 13.5px;
+    color: var(--gray1);
+    margin-bottom: 10px;
+    line-height: 1.65;
+  }
+  .info-block p:last-child { margin-bottom: 0; }
+  .info-block ul { list-style: none; margin-top: 6px; display: flex; flex-direction: column; gap: 8px; }
+  .info-block ul li {
+    font-size: 13px;
+    color: var(--gray1);
+    padding-left: 16px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .info-block ul li::before {
+    content: '–';
+    position: absolute;
+    left: 0;
+    color: var(--gray3);
+  }
+
+  .note-pill {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 10px 18px;
+    border: 1px solid var(--border2);
+    border-radius: 3px;
+    font-size: 12px;
+    color: var(--gray1);
+    background: var(--surface);
+    line-height: 1.5;
+  }
+  .note-pill strong {
+    color: var(--white);
+    font-weight: 500;
+  }
+
+  .highlight-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    padding: 11px 22px;
+    background: var(--white);
+    border-radius: 100px;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: #080808;
+    letter-spacing: 0.01em;
+  }
+
+  /* ── CLOSING ── */
+  .closing {
+    padding: 64px 0 80px;
+    text-align: center;
+  }
+  .closing h2 {
+    font-family: var(--serif);
+    font-size: clamp(36px, 7vw, 56px);
+    font-weight: 400;
+    letter-spacing: -0.025em;
+    color: var(--white);
+    margin-bottom: 14px;
+  }
+  .closing h2 em { font-style: italic; color: var(--gray1); }
+  .closing p {
+    font-size: 13px;
+    color: var(--gray2);
+    margin-bottom: 32px;
+  }
+  .closing-rule {
+    width: 40px;
+    height: 1px;
+    background: var(--border2);
+    margin: 24px auto;
+  }
+  .closing-sig {
+    font-size: 13px;
+    color: var(--gray2);
+  }
+  .closing-sig strong {
+    display: block;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 20px 0;
+  }
+  footer .wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  footer span {
+    font-size: 11px;
+    color: var(--gray2);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 520px) {
+    .total-banner { flex-direction: column; align-items: flex-start; gap: 12px; padding: 28px 24px; }
+    .total-banner-note { text-align: left; }
+    .service-card-head { flex-direction: column; align-items: flex-start; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="wrap">
+    <span class="topbar-brand">Tomás Mateo Acosta</span>
+    <span class="topbar-meta">Presupuesto · 2026</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="wrap">
+    <p class="hero-eyebrow">Producción Audiovisual · Córdoba, AR</p>
+    <h1>Propuesta de<br>Servicios <em>Audiovisuales</em></h1>
+    <p class="hero-sub">Farmacia S. Antoniolli &nbsp;+&nbsp; Breve Market &nbsp;·&nbsp; Vigencia 30 días</p>
+  </div>
+</div>
+
+<!-- INVERSIÓN -->
+<div class="wrap">
+  <div class="total-banner">
+    <div>
+      <p class="total-banner-label">Inversión mensual total</p>
+      <p class="total-banner-price">$1.600.000</p>
+    </div>
+    <p class="total-banner-note">ARS / mes</p>
+  </div>
+</div>
+
+<!-- ALCANCE -->
+<section>
+  <div class="wrap">
+    <p class="section-label fade-in">Alcance del servicio</p>
+    <div class="service-cards">
+
+      <div class="service-card fade-in">
+        <div class="service-card-head">
+          <span class="service-card-title">FARMACIA S. ANTONIOLLI</span>
+          <span class="service-card-price">$750.000 / mes</span>
+        </div>
+        <div class="service-card-body">
+          <ul class="service-items">
+            <li>4 jornadas mensuales de producción audiovisual</li>
+            <li>Cobertura fotográfica y de video</li>
+            <li>Edición de 8 a 10 piezas mensuales para Reels/TikTok</li>
+            <li>1 instancia de corrección incluida por pieza</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="service-card fade-in">
+        <div class="service-card-head">
+          <span class="service-card-title">BREVE MARKET</span>
+          <span class="service-card-price">$750.000 / mes</span>
+        </div>
+        <div class="service-card-body">
+          <ul class="service-items">
+            <li>2 jornadas mensuales de producción audiovisual</li>
+            <li>Cobertura fotográfica y de video</li>
+            <li>Edición de aproximadamente 12 piezas mensuales para Reels/TikTok</li>
+            <li>1 instancia de corrección incluida por pieza</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="service-card fade-in">
+        <div class="service-card-head">
+          <span class="service-card-title">VIÁTICOS Y LOGÍSTICA</span>
+          <span class="service-card-price">$100.000 / mes</span>
+        </div>
+        <div class="service-card-body">
+          <ul class="service-items">
+            <li>Traslados dentro de Córdoba Capital</li>
+            <li>Gestión y respaldo de material audiovisual</li>
+            <li>Organización de archivos y entregas</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="total-row fade-in">
+      <span class="total-row-label">Total mensual</span>
+      <span class="total-row-price">$1.600.000</span>
+    </div>
+  </div>
+</section>
+
+<!-- TIEMPOS -->
+<section>
+  <div class="wrap">
+    <p class="section-label fade-in">Tiempos de entrega</p>
+    <div class="info-block fade-in">
+      <p>La primera versión de cada pieza será entregada dentro de un plazo estimado de 2 a 5 días hábiles posteriores a la jornada de producción.</p>
+      <p>Los tiempos podrán variar según:</p>
+      <ul>
+        <li>Complejidad del contenido y profundidad de la edición requerida</li>
+        <li>Cantidad de piezas generadas en cada jornada</li>
+        <li>Detalles específicos solicitados para cada entrega</li>
+      </ul>
+      <p style="margin-top:12px;">El objetivo es siempre entregar en el menor tiempo posible para favorecer una dinámica ágil y un proceso de feedback rápido.</p>
+      <div class="note-pill">
+        <strong>Correcciones:</strong> entregadas dentro de los 2 días hábiles posteriores a recibir las observaciones.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CORRECCIONES -->
+<section>
+  <div class="wrap">
+    <p class="section-label fade-in">Correcciones</p>
+    <div class="info-block fade-in">
+      <ul>
+        <li>Se incluye una (1) instancia de corrección por pieza.</li>
+        <li>Todas las observaciones deben enviarse consolidadas en un único mensaje o documento.</li>
+        <li>Modificaciones posteriores a dicha instancia podrán considerarse una nueva ronda y presupuestarse por separado.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- CONDICIONES -->
+<section>
+  <div class="wrap">
+    <p class="section-label fade-in">Condiciones generales</p>
+    <div class="info-block fade-in">
+      <ul>
+        <li>La duración estimada de cada jornada de producción será de hasta 4 horas.</li>
+        <li>Horas adicionales o coberturas extraordinarias podrán presupuestarse por separado.</li>
+        <li>Los plazos corren desde finalizada la jornada y recibido todo el material para edición.</li>
+        <li>El pago se realiza a mes vencido, entre el día 1 y el día 10 de cada mes.</li>
+        <li>Presupuesto válido por 30 días.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- CONTRAPROPUESTAS -->
+<section>
+  <div class="wrap">
+    <p class="section-label fade-in">Aceptación de contrapropuestas</p>
+    <div class="info-block fade-in">
+      <p>En caso de acordar una contrapropuesta económica diferente al presupuesto original, su aceptación quedará sujeta al pago anticipado del 50% del valor mensual acordado.</p>
+      <p>Dicho pago tiene como finalidad la reserva de agenda, planificación de la producción y asignación de recursos para el inicio del servicio.</p>
+      <p>Una vez recibido el anticipo, se dará por aceptada la propuesta modificada y se procederá con el inicio de las actividades acordadas.</p>
+      <div class="highlight-pill">50% anticipado para reservar agenda</div>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<div class="closing">
+  <div class="wrap">
+    <h2 class="fade-in">¿<em>Arrancamos</em>?</h2>
+    <p class="fade-in">Este presupuesto tiene validez de 30 días desde su emisión.</p>
+    <div class="closing-rule"></div>
+    <div class="closing-sig fade-in">
+      <strong>Tomás Mateo Acosta</strong>
+      tmacosta.ok &nbsp;·&nbsp; @TeoEnRed
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <span>Tomás Mateo Acosta</span>
+    <span>Presupuesto · 2026</span>
+  </div>
+</footer>
+
+<script>
+  const els = document.querySelectorAll('.fade-in');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  els.forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
